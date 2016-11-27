@@ -1,9 +1,11 @@
 package fr.efaya.repository.service;
 
+import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSFile;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.PicturesRepository;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -69,5 +71,23 @@ public class PicturesService implements CRUDService {
         }
         repository.delete(picture);
         return picture;
+    }
+
+    public byte[] retrievePictureBinary(String id) throws CommonObjectNotFound {
+        Picture picture = findById(id);
+        if (picture.getBinaryId() != null) {
+            GridFSDBFile file = gridFsOperations.findOne(new Query(Criteria.where(picture.getBinaryId())));
+            try {
+                return IOUtils.toByteArray(file.getInputStream());
+            } catch (IOException e) {
+                throw new PictureBinaryNotFound();
+            }
+
+        }
+        throw new PictureBinaryNotFound();
+    }
+
+
+    private class PictureBinaryNotFound extends CommonObjectNotFound {
     }
 }

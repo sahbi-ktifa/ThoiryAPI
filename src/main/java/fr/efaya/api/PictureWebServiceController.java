@@ -5,6 +5,7 @@ import fr.efaya.repository.service.CommonObjectNotFound;
 import fr.efaya.repository.service.PicturesService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,11 @@ public class PictureWebServiceController {
     public Picture savePicture(@PathVariable(required = false) String id,
                                @RequestBody @Valid Picture picture) throws CommonObjectNotFound {
         return save(picture, id);
+    }
+
+    @RequestMapping(value = "{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
+    public byte[] retrievePicturePreview(@PathVariable String id) throws CommonObjectNotFound {
+        return picturesService.retrievePictureBinary(id);
     }
 
     @RequestMapping(value = "{id}/binary", method = RequestMethod.POST)

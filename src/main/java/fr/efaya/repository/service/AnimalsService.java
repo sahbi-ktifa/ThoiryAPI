@@ -1,9 +1,11 @@
 package fr.efaya.repository.service;
 
+import fr.efaya.Constants;
 import fr.efaya.domain.Animal;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.repository.AnimalsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,7 +41,7 @@ public class AnimalsService implements CRUDService {
 
     @Override
     public List<Animal> findAll() {
-        return repository.findAll();
+        return repository.findAll(new PageRequest(0, Constants.PAGE)).getContent();
     }
 
     @Override

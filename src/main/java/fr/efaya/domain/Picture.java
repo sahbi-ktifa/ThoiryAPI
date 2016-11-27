@@ -2,8 +2,7 @@ package fr.efaya.domain;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotNull;
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,12 +10,11 @@ import java.util.List;
  */
 @Document(collection="pictures")
 public class Picture extends CommonObject {
-    private List<String> animalIds;
-    private List<String> speciesIds;
-    @NotNull
+    private List<String> animalIds = new ArrayList<>();
+    private List<String> speciesIds = new ArrayList<>();
     private String binaryId;
     private String title;
-    private Integer liked;
+    private Integer liked = 0;
 
     public List<String> getAnimalIds() {
         return animalIds;

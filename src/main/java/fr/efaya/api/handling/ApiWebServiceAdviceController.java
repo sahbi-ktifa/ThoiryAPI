@@ -6,13 +6,14 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Date;
 
 /**
  * Created by sktifa on 27/11/2016.
  */
-@ControllerAdvice
+@RestControllerAdvice
 public class ApiWebServiceAdviceController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)  // 404
