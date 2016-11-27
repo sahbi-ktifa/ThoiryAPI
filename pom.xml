@@ -8,8 +8,8 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>thoiry-photos-manager</name>
-    <description>Personal Bank Account manager</description>
+    <name>thoiry-photos-api</name>
+    <description>Thoiry Photos API</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -37,6 +37,10 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
@@ -58,6 +62,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
