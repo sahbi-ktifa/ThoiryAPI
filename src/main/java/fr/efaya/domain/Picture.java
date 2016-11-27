@@ -1,31 +1,45 @@
 package fr.efaya.domain;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.List;
 
 /**
  * Created by sktifa on 25/11/2016.
  */
+@Document(collection="pictures")
 public class Picture extends CommonObject {
-    private List<String> targetIds;
-    private File picture;
+    private List<String> animalIds;
+    private List<String> speciesIds;
+    @NotNull
+    private String binaryId;
     private String title;
     private Integer liked;
 
-    public List<String> getTargetIds() {
-        return targetIds;
+    public List<String> getAnimalIds() {
+        return animalIds;
     }
 
-    public void setTargetIds(List<String> targetIds) {
-        this.targetIds = targetIds;
+    public void setAnimalIds(List<String> animalIds) {
+        this.animalIds = animalIds;
     }
 
-    public File getPicture() {
-        return picture;
+    public List<String> getSpeciesIds() {
+        return speciesIds;
     }
 
-    public void setPicture(File picture) {
-        this.picture = picture;
+    public void setSpeciesIds(List<String> speciesIds) {
+        this.speciesIds = speciesIds;
+    }
+
+    public String getBinaryId() {
+        return binaryId;
+    }
+
+    public void setBinaryId(String binaryId) {
+        this.binaryId = binaryId;
     }
 
     public String getTitle() {

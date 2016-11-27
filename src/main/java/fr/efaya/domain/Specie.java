@@ -1,13 +1,17 @@
 package fr.efaya.domain;
 
 import fr.efaya.Constants;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
  * Created by sktifa on 25/11/2016.
  */
+@Document(collection="species")
 public class Specie extends CommonObject {
+    @NotNull
     private String name;
     private String description;
     private List<Constants.ORIGIN> origins;

@@ -1,10 +1,17 @@
 package fr.efaya.domain;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by sktifa on 25/11/2016.
  */
+@Document(collection="animals")
 public class Animal extends CommonObject {
+    @NotNull
     private String specieId;
+    @NotNull
     private String name;
     private Integer age;
 
