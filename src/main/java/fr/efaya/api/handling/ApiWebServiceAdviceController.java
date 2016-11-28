@@ -1,5 +1,6 @@
 package fr.efaya.api.handling;
 
+import fr.efaya.api.PictureWebServiceController;
 import fr.efaya.repository.service.CommonObjectNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -20,6 +21,12 @@ public class ApiWebServiceAdviceController {
     @ExceptionHandler(CommonObjectNotFound.class)
     public ErrorMessage handleNotFound() {
         return new ErrorMessage("Entity not found", new Date());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 404
+    @ExceptionHandler(PictureWebServiceController.PictureBinaryNotAcceptable.class)
+    public ErrorMessage handleNotAcceptable() {
+        return new ErrorMessage("Media is not acceptable", new Date());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)  // 404

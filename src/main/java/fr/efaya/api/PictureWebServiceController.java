@@ -6,9 +6,11 @@ import fr.efaya.repository.service.PicturesService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,11 +50,18 @@ public class PictureWebServiceController {
 
     @RequestMapping(value = "{id}/binary", method = RequestMethod.POST)
     public Picture savePictureBinary(@PathVariable String id,
-                                     @RequestBody MultipartFile file) throws CommonObjectNotFound {
+                                     @RequestParam MultipartFile file) throws CommonObjectNotFound {
+        if (file == null) {
+            throw new PictureBinaryNotAcceptable();
+        }
         Picture picture = picturesService.findById(id);
         File binary = null;
         try {
             binary = convert(file);
+            String mimeType = new MimetypesFileTypeMap().getContentType(binary);
+            if (mimeType == null || !mimeType.split("/")[0].equals("image")) {
+                throw new PictureBinaryNotAcceptable();
+            }
             picturesService.saveBinary(picture, binary);
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,5 +90,8 @@ public class PictureWebServiceController {
         fos.write(file.getBytes());
         fos.close();
         return convFile;
+    }
+
+    public class PictureBinaryNotAcceptable extends CommonObjectNotFound {
     }
 }

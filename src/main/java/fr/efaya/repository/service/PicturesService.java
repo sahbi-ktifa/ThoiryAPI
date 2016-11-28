@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by sktifa on 25/11/2016.
@@ -40,8 +39,8 @@ public class PicturesService implements CRUDService {
 
     public void saveBinary(Picture picture, File file) throws CommonObjectNotFound {
         try (InputStream inputStream = new FileInputStream(file.getAbsolutePath())) {
-            GridFSFile stored = gridFsOperations.store(inputStream, UUID.randomUUID());
-            picture.setBinaryId((String) stored.getId());
+            GridFSFile stored = gridFsOperations.store(inputStream, file.getName());
+            picture.setBinaryId(stored.getId().toString());
             save(picture.getId(), picture);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -67,7 +66,7 @@ public class PicturesService implements CRUDService {
     public Picture delete(String id) throws CommonObjectNotFound {
         Picture picture = findById(id);
         if (picture.getBinaryId() != null) {
-            gridFsOperations.delete(new Query(Criteria.where(picture.getBinaryId())));
+            gridFsOperations.delete(new Query(Criteria.where("_id").is(picture.getBinaryId())));
         }
         repository.delete(picture);
         return picture;
@@ -76,7 +75,7 @@ public class PicturesService implements CRUDService {
     public byte[] retrievePictureBinary(String id) throws CommonObjectNotFound {
         Picture picture = findById(id);
         if (picture.getBinaryId() != null) {
-            GridFSDBFile file = gridFsOperations.findOne(new Query(Criteria.where(picture.getBinaryId())));
+            GridFSDBFile file = gridFsOperations.findOne(new Query(Criteria.where("_id").is(picture.getBinaryId())));
             try {
                 return IOUtils.toByteArray(file.getInputStream());
             } catch (IOException e) {
@@ -86,7 +85,6 @@ public class PicturesService implements CRUDService {
         }
         throw new PictureBinaryNotFound();
     }
-
 
     private class PictureBinaryNotFound extends CommonObjectNotFound {
     }
