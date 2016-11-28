@@ -2,11 +2,16 @@ package fr.efaya.repository.service;
 
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSFile;
+import fr.efaya.Constants;
+import fr.efaya.api.PictureResultContext;
+import fr.efaya.api.PictureSearchContext;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.PicturesRepository;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
@@ -60,6 +65,16 @@ public class PicturesService implements CRUDService {
     @Override
     public List<Picture> findAll() {
         return repository.findAll();
+    }
+
+    public PictureResultContext findAll(PictureSearchContext pictureSearchContext) {
+        final Page<Picture> page = repository.findAll(new PageRequest(pictureSearchContext.getPage(), Constants.PAGE));
+
+        PictureResultContext pictureResultContext = new PictureResultContext();
+        pictureResultContext.setPage(pictureSearchContext.getPage());
+        pictureResultContext.setTotal((int) page.getTotalElements());
+        pictureResultContext.setPictures(page.getContent());
+        return pictureResultContext;
     }
 
     @Override

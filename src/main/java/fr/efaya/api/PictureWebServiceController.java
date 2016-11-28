@@ -6,7 +6,6 @@ import fr.efaya.repository.service.PicturesService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +14,6 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by sktifa on 25/11/2016.
@@ -28,8 +26,8 @@ public class PictureWebServiceController {
     private PicturesService picturesService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Picture> retrieveAllPictures() {
-        return picturesService.findAll();
+    public PictureResultContext retrieveAllPictures(@RequestParam(required = false) Integer page) {
+        return picturesService.findAll(new PictureSearchContext(page != null ? page : 0));
     }
 
     @RequestMapping(method = RequestMethod.POST)
