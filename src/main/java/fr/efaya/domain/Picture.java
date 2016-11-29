@@ -3,6 +3,7 @@ package fr.efaya.domain;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ public class Picture extends CommonObject {
     private String binaryId;
     private String title;
     private Integer liked = 0;
+    private Date lastModified;
 
     public List<String> getAnimalIds() {
         return animalIds;
@@ -54,5 +56,13 @@ public class Picture extends CommonObject {
 
     public void setLiked(Integer liked) {
         this.liked = liked;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
     }
 }

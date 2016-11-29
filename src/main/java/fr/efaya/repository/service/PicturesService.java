@@ -8,6 +8,9 @@ import fr.efaya.api.PictureSearchContext;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.PicturesRepository;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.name.Rename;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +20,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.color.ColorSpace;
+import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,7 +47,9 @@ public class PicturesService implements CRUDService {
         if (id != null && repository.findOne(id) == null) {
             throw new CommonObjectNotFound();
         }
-        return repository.save((Picture)object);
+        Picture picture = (Picture) object;
+        picture.setLastModified(new Date());
+        return repository.save(picture);
     }
 
     public void saveBinary(Picture picture, File file) throws CommonObjectNotFound {
@@ -87,14 +97,27 @@ public class PicturesService implements CRUDService {
         return picture;
     }
 
-    public byte[] retrievePictureBinary(String id) throws CommonObjectNotFound {
+    public byte[] retrievePictureBinary(String id, String format) throws CommonObjectNotFound {
         Picture picture = findById(id);
         if (picture.getBinaryId() != null) {
             GridFSDBFile file = gridFsOperations.findOne(new Query(Criteria.where("_id").is(picture.getBinaryId())));
-            try {
-                return IOUtils.toByteArray(file.getInputStream());
-            } catch (IOException e) {
-                throw new PictureBinaryNotFound();
+            if (file != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try {
+                    Constants.Format resolvedFormat = Constants.formats.get(format) != null ? Constants.formats.get(format) : Constants.formats.get(Constants.THUMB);
+                    BufferedImage resizedImage = new BufferedImage(resolvedFormat.getWidth(), resolvedFormat.getHeight(), ColorSpace.TYPE_RGB);
+                    Graphics2D g = resizedImage.createGraphics();
+                    g.drawImage(ImageIO.read(file.getInputStream()), 0, 0, resolvedFormat.getWidth(), resolvedFormat.getHeight(), null);
+                    g.dispose();
+
+                    ImageIO.write(resizedImage, "jpg", baos);
+                    baos.flush();
+                    byte[] result = baos.toByteArray();
+                    baos.close();
+                    return result;
+                } catch (IOException e) {
+                    throw new PictureBinaryNotFound();
+                }
             }
 
         }

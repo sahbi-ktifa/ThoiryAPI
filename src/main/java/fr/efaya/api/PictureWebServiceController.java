@@ -1,5 +1,6 @@
 package fr.efaya.api;
 
+import fr.efaya.Constants;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.service.CommonObjectNotFound;
 import fr.efaya.repository.service.PicturesService;
@@ -42,8 +43,9 @@ public class PictureWebServiceController {
     }
 
     @RequestMapping(value = "{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
-    public byte[] retrievePicturePreview(@PathVariable String id) throws CommonObjectNotFound {
-        return picturesService.retrievePictureBinary(id);
+    public byte[] retrievePicturePreview(@PathVariable String id,
+                                         @RequestParam(required = false, defaultValue = Constants.THUMB) String format) throws CommonObjectNotFound {
+        return picturesService.retrievePictureBinary(id, format);
     }
 
     @RequestMapping(value = "{id}/binary", method = RequestMethod.POST)
