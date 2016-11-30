@@ -1,7 +1,9 @@
 package fr.efaya.api;
 
 import fr.efaya.Constants;
+import fr.efaya.domain.Animal;
 import fr.efaya.domain.Picture;
+import fr.efaya.repository.service.AnimalsService;
 import fr.efaya.repository.service.CommonObjectNotFound;
 import fr.efaya.repository.service.PicturesService;
 import org.apache.commons.io.FileUtils;
@@ -15,6 +17,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by sktifa on 25/11/2016.
@@ -26,9 +29,17 @@ public class PictureWebServiceController {
     @Autowired
     private PicturesService picturesService;
 
+    @Autowired
+    private AnimalsService animalsService;
+
     @RequestMapping(method = RequestMethod.GET)
-    public PictureResultContext retrieveAllPictures(@RequestParam(required = false) Integer page) {
-        return picturesService.findAll(new PictureSearchContext(page != null ? page : 0));
+    public PictureResultContext retrieveAllPictures(@RequestParam(required = false) Integer page,
+                                                    @RequestParam(required = false) String specieId) {
+        PictureSearchContext pictureSearchContext = new PictureSearchContext(page != null ? page : 0);
+        if (specieId != null) {
+            pictureSearchContext.setSpeciesId(specieId);
+        }
+        return picturesService.findAll(pictureSearchContext);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -80,6 +91,17 @@ public class PictureWebServiceController {
 
     private Picture save(Picture picture, String id) throws CommonObjectNotFound {
         picture.setId(id);
+        if (picture.getAnimalIds() != null && !picture.getAnimalIds().isEmpty()) {
+            for (String animalId : picture.getAnimalIds()) {
+                Animal animal = animalsService.findById(animalId);
+                if (picture.getSpeciesIds() == null) {
+                    picture.setSpeciesIds(new ArrayList<>());
+                }
+                if (picture.getSpeciesIds().contains(animal.getSpecieId())) {
+                    picture.getSpeciesIds().add(animal.getSpecieId());
+                }
+            }
+        }
         return picturesService.save(id, picture);
     }
 

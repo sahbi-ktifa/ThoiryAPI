@@ -5,6 +5,7 @@ import com.mongodb.gridfs.GridFSFile;
 import fr.efaya.Constants;
 import fr.efaya.api.PictureResultContext;
 import fr.efaya.api.PictureSearchContext;
+import fr.efaya.api.handler.PageSearchHandler;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.PicturesRepository;
@@ -25,6 +26,7 @@ import java.io.*;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by sktifa on 25/11/2016.
@@ -33,11 +35,13 @@ import java.util.List;
 public class PicturesService implements CRUDService {
     private PicturesRepository repository;
     private GridFsOperations gridFsOperations;
+    private List<PageSearchHandler> pageSearchHandlers;
 
     @Autowired
-    public PicturesService(PicturesRepository repository, GridFsOperations gridFsOperations) {
+    public PicturesService(PicturesRepository repository, GridFsOperations gridFsOperations, List<PageSearchHandler> handlers) {
         this.repository = repository;
         this.gridFsOperations = gridFsOperations;
+        this.pageSearchHandlers = handlers;
     }
 
     @Override
@@ -76,13 +80,18 @@ public class PicturesService implements CRUDService {
     }
 
     public PictureResultContext findAll(PictureSearchContext pictureSearchContext) {
-        final Page<Picture> page = repository.findAll(new PageRequest(pictureSearchContext.getPage(), Constants.PAGE, new Sort(new Sort.Order(Sort.Direction.DESC, "lastModified"))));
-
-        PictureResultContext pictureResultContext = new PictureResultContext();
-        pictureResultContext.setPage(pictureSearchContext.getPage());
-        pictureResultContext.setTotal((int) page.getTotalElements());
-        pictureResultContext.setPictures(page.getContent());
-        return pictureResultContext;
+        if (pageSearchHandlers != null) {
+            Optional<PageSearchHandler> handlerOptional = pageSearchHandlers.stream().filter(h -> h.accept(pictureSearchContext)).findFirst();
+            if (handlerOptional.isPresent()) {
+                final Page<Picture> page = handlerOptional.get().resolve(pictureSearchContext);
+                PictureResultContext pictureResultContext = new PictureResultContext();
+                pictureResultContext.setPage(pictureSearchContext.getPage());
+                pictureResultContext.setTotal((int) page.getTotalElements());
+                pictureResultContext.setPictures(page.getContent());
+                return pictureResultContext;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -128,6 +137,13 @@ public class PicturesService implements CRUDService {
 
     public Picture findOneBySpeciesId(String specieId) {
         return repository.findOneBySpeciesIdsIn(Collections.singletonList(specieId), new Sort(
+                new Sort.Order(Sort.Direction.DESC, "liked"),
+                new Sort.Order(Sort.Direction.DESC, "lastModified")
+        ));
+    }
+
+    public Picture findOneByAnimalsId(String animalId) {
+        return repository.findOneByAnimalIdsIn(Collections.singletonList(animalId), new Sort(
                 new Sort.Order(Sort.Direction.DESC, "liked"),
                 new Sort.Order(Sort.Direction.DESC, "lastModified")
         ));

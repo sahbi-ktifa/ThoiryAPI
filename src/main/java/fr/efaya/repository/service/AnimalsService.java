@@ -4,9 +4,11 @@ import fr.efaya.domain.Animal;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.repository.AnimalsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by sktifa on 25/11/2016.
@@ -47,5 +49,11 @@ public class AnimalsService implements CRUDService {
         Animal animal = findById(id);
         repository.delete(animal);
         return animal;
+    }
+
+    public List<Animal> retrieveSiblings(String id) throws CommonObjectNotFound {
+        Animal animal = findById(id);
+        List<Animal> animals = repository.findBySpecieId(animal.getSpecieId());
+        return animals.stream().filter(a -> !a.getId().equals(id)).collect(Collectors.toList());
     }
 }
