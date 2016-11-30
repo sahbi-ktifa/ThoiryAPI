@@ -8,13 +8,10 @@ import fr.efaya.api.PictureSearchContext;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.PicturesRepository;
-import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.name.Rename;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
@@ -25,6 +22,7 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -74,11 +72,11 @@ public class PicturesService implements CRUDService {
 
     @Override
     public List<Picture> findAll() {
-        return repository.findAll();
+        return repository.findAll(new Sort(new Sort.Order(Sort.Direction.DESC, "lastModified")));
     }
 
     public PictureResultContext findAll(PictureSearchContext pictureSearchContext) {
-        final Page<Picture> page = repository.findAll(new PageRequest(pictureSearchContext.getPage(), Constants.PAGE));
+        final Page<Picture> page = repository.findAll(new PageRequest(pictureSearchContext.getPage(), Constants.PAGE, new Sort(new Sort.Order(Sort.Direction.DESC, "lastModified"))));
 
         PictureResultContext pictureResultContext = new PictureResultContext();
         pictureResultContext.setPage(pictureSearchContext.getPage());
@@ -95,6 +93,10 @@ public class PicturesService implements CRUDService {
         }
         repository.delete(picture);
         return picture;
+    }
+
+    public byte[] retrievePictureBinary(String id) throws CommonObjectNotFound {
+        return retrievePictureBinary(id, Constants.THUMB);
     }
 
     public byte[] retrievePictureBinary(String id, String format) throws CommonObjectNotFound {
@@ -122,6 +124,13 @@ public class PicturesService implements CRUDService {
 
         }
         throw new PictureBinaryNotFound();
+    }
+
+    public Picture findOneBySpeciesId(String specieId) {
+        return repository.findOneBySpeciesIdsIn(Collections.singletonList(specieId), new Sort(
+                new Sort.Order(Sort.Direction.DESC, "liked"),
+                new Sort.Order(Sort.Direction.DESC, "lastModified")
+        ));
     }
 
     private class PictureBinaryNotFound extends CommonObjectNotFound {

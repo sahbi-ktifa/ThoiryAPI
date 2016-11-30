@@ -30,7 +30,7 @@ public class AnimalWebServiceController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.POST)
-    public Animal saveAnimal(@PathVariable(required = false) String id,
+    public Animal saveAnimal(@PathVariable String id,
                              @RequestBody @Valid Animal animal) throws CommonObjectNotFound {
         return save(animal, id);
     }

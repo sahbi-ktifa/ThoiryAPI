@@ -37,7 +37,7 @@ public class PictureWebServiceController {
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.POST)
-    public Picture savePicture(@PathVariable(required = false) String id,
+    public Picture savePicture(@PathVariable String id,
                                @RequestBody @Valid Picture picture) throws CommonObjectNotFound {
         return save(picture, id);
     }
