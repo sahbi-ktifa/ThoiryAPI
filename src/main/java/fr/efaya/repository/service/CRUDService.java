@@ -12,10 +12,8 @@ public interface CRUDService {
     @PreAuthorize("hasRole('ROLE_USER')")
     CommonObject save(String id, CommonObject object) throws CommonObjectNotFound;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     CommonObject findById(String id) throws CommonObjectNotFound;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     List<? extends CommonObject> findAll();
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * Created by sktifa on 25/11/2016.
  */
 @RestController
-@RequestMapping("api/picture")
+@CrossOrigin
 public class PictureWebServiceController {
 
     @Autowired
@@ -32,7 +32,7 @@ public class PictureWebServiceController {
     @Autowired
     private AnimalsService animalsService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "common/picture", method = RequestMethod.GET)
     public PictureResultContext retrieveAllPictures(@RequestParam(required = false) Integer page,
                                                     @RequestParam(required = false) String specieId) {
         PictureSearchContext pictureSearchContext = new PictureSearchContext(page != null ? page : 0);
@@ -42,24 +42,24 @@ public class PictureWebServiceController {
         return picturesService.findAll(pictureSearchContext);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "api/picture", method = RequestMethod.POST)
     public Picture createPicture(@RequestBody @Valid Picture picture) throws CommonObjectNotFound {
         return save(picture, null);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "api/picture/{id}", method = RequestMethod.POST)
     public Picture savePicture(@PathVariable String id,
                                @RequestBody @Valid Picture picture) throws CommonObjectNotFound {
         return save(picture, id);
     }
 
-    @RequestMapping(value = "{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
+    @RequestMapping(value = "common/picture/{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
     public byte[] retrievePicturePreview(@PathVariable String id,
                                          @RequestParam(required = false, defaultValue = Constants.THUMB) String format) throws CommonObjectNotFound {
         return picturesService.retrievePictureBinary(id, format);
     }
 
-    @RequestMapping(value = "{id}/binary", method = RequestMethod.POST)
+    @RequestMapping(value = "api/picture/{id}/binary", method = RequestMethod.POST)
     public Picture savePictureBinary(@PathVariable String id,
                                      @RequestParam MultipartFile file) throws CommonObjectNotFound {
         if (file == null) {
@@ -84,7 +84,7 @@ public class PictureWebServiceController {
         return picture;
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "api/picture/{id}", method = RequestMethod.DELETE)
     public Picture deletePicture(@PathVariable(required = false) String id) throws CommonObjectNotFound {
         return picturesService.delete(id);
     }

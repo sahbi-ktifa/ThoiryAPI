@@ -18,7 +18,7 @@ import java.util.List;
  * Created by sktifa on 25/11/2016.
  */
 @RestController
-@RequestMapping("api/specie")
+@CrossOrigin
 public class SpecieWebServiceController {
 
     @Autowired
@@ -27,17 +27,17 @@ public class SpecieWebServiceController {
     @Autowired
     private PicturesService picturesService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "common/specie", method = RequestMethod.GET)
     public List<Specie> retrieveAllSpecies() {
         return speciesService.findAll();
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "common/specie/{id}", method = RequestMethod.GET)
     public Specie retrieveSpecie(@PathVariable String id) throws CommonObjectNotFound {
         return speciesService.findById(id);
     }
 
-    @RequestMapping(value = "{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
+    @RequestMapping(value = "common/specie/{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
     public byte[] retrieveSpeciePreview(@PathVariable String id) throws CommonObjectNotFound, IOException {
         Picture picture = picturesService.findOneBySpeciesId(id);
         if (picture != null) {
@@ -47,18 +47,18 @@ public class SpecieWebServiceController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "api/specie", method = RequestMethod.POST)
     public Specie createSpecie(@RequestBody @Valid Specie specie) throws CommonObjectNotFound {
         return save(specie, null);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "api/specie/{id}", method = RequestMethod.POST)
     public Specie saveSpecie(@PathVariable String id,
                              @RequestBody @Valid Specie specie) throws CommonObjectNotFound {
         return save(specie, id);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "api/specie/{id}", method = RequestMethod.DELETE)
     public Specie deleteSpecie(@PathVariable(required = false) String id) throws CommonObjectNotFound {
         return speciesService.delete(id);
     }
