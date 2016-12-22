@@ -19,7 +19,6 @@ import java.util.List;
  * Created by sktifa on 25/11/2016.
  */
 @RestController
-@RequestMapping("api/animal")
 public class AnimalWebServiceController {
 
     @Autowired
