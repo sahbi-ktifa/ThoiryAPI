@@ -97,7 +97,7 @@ public class PictureWebServiceController {
                 if (picture.getSpeciesIds() == null) {
                     picture.setSpeciesIds(new ArrayList<>());
                 }
-                if (picture.getSpeciesIds().contains(animal.getSpecieId())) {
+                if (!picture.getSpeciesIds().contains(animal.getSpecieId())) {
                     picture.getSpeciesIds().add(animal.getSpecieId());
                 }
             }
