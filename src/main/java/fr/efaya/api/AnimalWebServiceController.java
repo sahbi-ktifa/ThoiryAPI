@@ -28,17 +28,17 @@ public class AnimalWebServiceController {
     @Autowired
     private PicturesService picturesService;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "common/animal", method = RequestMethod.GET)
     public List<Animal> retrieveAllAnimals() {
         return animalsService.findAll();
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "common/animal/{id}", method = RequestMethod.GET)
     public Animal retrieveAnimal(@PathVariable String id) throws CommonObjectNotFound {
         return animalsService.findById(id);
     }
 
-    @RequestMapping(value = "{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
+    @RequestMapping(value = "common/animal/{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
     public byte[] retrieveAnimalPreview(@PathVariable String id) throws CommonObjectNotFound, IOException {
         Picture picture = picturesService.findOneByAnimalsId(id);
         if (picture != null) {
@@ -48,23 +48,23 @@ public class AnimalWebServiceController {
         }
     }
 
-    @RequestMapping(value = "{id}/siblings", method = RequestMethod.GET)
+    @RequestMapping(value = "common/animal/{id}/siblings", method = RequestMethod.GET)
     public List<Animal> retrieveAnimalSiblings(@PathVariable String id) throws CommonObjectNotFound {
         return animalsService.retrieveSiblings(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "api/animal", method = RequestMethod.POST)
     public Animal createAnimal(@RequestBody @Valid Animal animal) throws CommonObjectNotFound {
         return save(animal, null);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "api/animal/{id}", method = RequestMethod.POST)
     public Animal saveAnimal(@PathVariable String id,
                              @RequestBody @Valid Animal animal) throws CommonObjectNotFound {
         return save(animal, id);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "api/animal/{id}", method = RequestMethod.DELETE)
     public Animal deleteAnimal(@PathVariable(required = false) String id) throws CommonObjectNotFound {
         return animalsService.delete(id);
     }
