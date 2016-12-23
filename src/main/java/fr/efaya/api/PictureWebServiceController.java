@@ -53,6 +53,14 @@ public class PictureWebServiceController {
         return save(picture, id);
     }
 
+    @RequestMapping(value = "common/picture/{id}/like", method = RequestMethod.POST)
+    public Integer likePicture(@PathVariable String id) throws CommonObjectNotFound {
+        Picture picture = picturesService.findById(id);
+        picture.setLiked(picture.getLiked() + 1);
+        picturesService.save(id, picture);
+        return picture.getLiked();
+    }
+
     @RequestMapping(value = "common/picture/{id}/preview", method = RequestMethod.GET, produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE})
     public byte[] retrievePicturePreview(@PathVariable String id,
                                          @RequestParam(required = false, defaultValue = Constants.THUMB) String format) throws CommonObjectNotFound {
