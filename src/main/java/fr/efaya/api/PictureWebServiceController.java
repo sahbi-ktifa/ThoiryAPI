@@ -55,7 +55,7 @@ public class PictureWebServiceController {
         return save(picture, id);
     }
 
-    @RequestMapping(value = "common/picture/{id}/like", method = RequestMethod.POST)
+    @RequestMapping(value = "api/picture/{id}/like", method = RequestMethod.POST)
     public Integer likePicture(@PathVariable String id) throws CommonObjectNotFound {
         Picture picture = picturesService.findById(id);
         picture.setLiked(picture.getLiked() + 1);
