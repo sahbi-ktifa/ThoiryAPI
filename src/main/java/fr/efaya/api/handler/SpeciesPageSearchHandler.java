@@ -28,6 +28,6 @@ public class SpeciesPageSearchHandler implements PageSearchHandler {
     @Override
     public Page<Picture> resolve(PictureSearchContext context) {
         return repository.findBySpeciesIdsIn(Collections.singletonList(context.getSpeciesId()), new PageRequest(context.getPage(), Constants.PAGE,
-                new Sort(new Sort.Order(Sort.Direction.DESC, "lastModified"))));
+                new Sort(new Sort.Order(Sort.Direction.DESC, "creationDate"))));
     }
 }

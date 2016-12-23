@@ -16,6 +16,7 @@ public class Picture extends CommonObject {
     private String binaryId;
     private String title;
     private Integer liked = 0;
+    private Date creationDate;
     private Date lastModified;
 
     public List<String> getAnimalIds() {
@@ -56,6 +57,14 @@ public class Picture extends CommonObject {
 
     public void setLiked(Integer liked) {
         this.liked = liked;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Date getLastModified() {

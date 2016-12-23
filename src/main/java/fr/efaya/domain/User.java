@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,6 +16,7 @@ public class User {
     private String id;
     private String username;
     private String password;
+    private Date creationDate;
     private List<String> roles;
     private boolean valid;
 
@@ -47,6 +49,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public List<String> getRoles() {

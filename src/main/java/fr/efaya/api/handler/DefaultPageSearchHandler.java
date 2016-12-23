@@ -26,6 +26,6 @@ public class DefaultPageSearchHandler implements PageSearchHandler {
     @Override
     public Page<Picture> resolve(PictureSearchContext context) {
         return repository.findAll(new PageRequest(context.getPage(), Constants.PAGE,
-                new Sort(new Sort.Order(Sort.Direction.DESC, "lastModified"))));
+                new Sort(new Sort.Order(Sort.Direction.DESC, "creationDate"))));
     }
 }

@@ -76,7 +76,7 @@ public class PicturesService implements CRUDService {
 
     @Override
     public List<Picture> findAll() {
-        return repository.findAll(new Sort(new Sort.Order(Sort.Direction.DESC, "lastModified")));
+        return repository.findAll(new Sort(new Sort.Order(Sort.Direction.DESC, "creationDate")));
     }
 
     public PictureResultContext findAll(PictureSearchContext pictureSearchContext) {
@@ -138,14 +138,14 @@ public class PicturesService implements CRUDService {
     public Picture findOneBySpeciesId(String specieId) {
         return repository.findOneBySpeciesIdsIn(Collections.singletonList(specieId), new Sort(
                 new Sort.Order(Sort.Direction.DESC, "liked"),
-                new Sort.Order(Sort.Direction.DESC, "lastModified")
+                new Sort.Order(Sort.Direction.DESC, "creationDate")
         ));
     }
 
     public Picture findOneByAnimalsId(String animalId) {
         return repository.findOneByAnimalIdsIn(Collections.singletonList(animalId), new Sort(
                 new Sort.Order(Sort.Direction.DESC, "liked"),
-                new Sort.Order(Sort.Direction.DESC, "lastModified")
+                new Sort.Order(Sort.Direction.DESC, "creationDate")
         ));
     }
 

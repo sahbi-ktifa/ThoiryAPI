@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by sktifa on 25/11/2016.
@@ -44,6 +45,7 @@ public class PictureWebServiceController {
 
     @RequestMapping(value = "api/picture", method = RequestMethod.POST)
     public Picture createPicture(@RequestBody @Valid Picture picture) throws CommonObjectNotFound {
+        picture.setCreationDate(new Date());
         return save(picture, null);
     }
 

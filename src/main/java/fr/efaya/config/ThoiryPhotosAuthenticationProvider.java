@@ -33,7 +33,7 @@ public class ThoiryPhotosAuthenticationProvider implements AuthenticationProvide
             throw new BadCredentialsException("Username is unknown or password is incorrect");
         }
         // Pour finir on retourne un objet de type Authentication
-        return new UsernamePasswordAuthenticationToken(name, password, user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+        return new UsernamePasswordAuthenticationToken(name, password, user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toList()));
     }
 
     @Override

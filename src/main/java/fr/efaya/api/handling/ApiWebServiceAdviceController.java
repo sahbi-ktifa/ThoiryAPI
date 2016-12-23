@@ -1,6 +1,7 @@
 package fr.efaya.api.handling;
 
 import fr.efaya.api.PictureWebServiceController;
+import fr.efaya.api.UserWebServiceController;
 import fr.efaya.repository.service.CommonObjectNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -33,5 +34,11 @@ public class ApiWebServiceAdviceController {
     @ExceptionHandler(AccessDeniedException.class)
     public ErrorMessage handleAccessDenied() {
         return new ErrorMessage("You are not allowed to execute this request", new Date());
+    }
+
+    @ResponseStatus(value= HttpStatus.CONFLICT, reason="Un utilisateur avec ce nom existe déjà.")
+    @ExceptionHandler(UserWebServiceController.AlreadyExistingUserException.class)
+    public ErrorMessage handleAlreadyExistingUserException() {
+        return new ErrorMessage("Un utilisateur avec ce nom existe déjà.", new Date());
     }
 }
