@@ -18,4 +18,5 @@ public interface PicturesRepository extends MongoRepository<Picture, String> {
     Picture findOneByAnimalIdsIn(List<String> animalIds, Sort sort);
 
     Page<Picture> findBySpeciesIdsIn(List<String> speciesId, Pageable pageable);
+    Page<Picture> findByAnimalIdsIn(List<String> animalIds, Pageable pageable);
 }

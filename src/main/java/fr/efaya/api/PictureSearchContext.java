@@ -8,17 +8,13 @@ import java.io.Serializable;
 public class PictureSearchContext implements Serializable {
     private Integer page;
     private String speciesId;
+    private String animalId;
 
     public PictureSearchContext() {
     }
 
     public PictureSearchContext(int page) {
         this.page = page;
-    }
-
-    public PictureSearchContext(String id) {
-        this.page = 0;
-        this.speciesId = id;
     }
 
     public Integer getPage() {
@@ -35,5 +31,13 @@ public class PictureSearchContext implements Serializable {
 
     public void setSpeciesId(String speciesId) {
         this.speciesId = speciesId;
+    }
+
+    public String getAnimalId() {
+        return animalId;
+    }
+
+    public void setAnimalId(String animalId) {
+        this.animalId = animalId;
     }
 }

@@ -35,10 +35,13 @@ public class PictureWebServiceController {
 
     @RequestMapping(value = "common/picture", method = RequestMethod.GET)
     public PictureResultContext retrieveAllPictures(@RequestParam(required = false) Integer page,
-                                                    @RequestParam(required = false) String specieId) {
+                                                    @RequestParam(required = false) String specieId,
+                                                    @RequestParam(required = false) String animalId) {
         PictureSearchContext pictureSearchContext = new PictureSearchContext(page != null ? page : 0);
         if (specieId != null) {
             pictureSearchContext.setSpeciesId(specieId);
+        } else if (animalId != null) {
+            pictureSearchContext.setAnimalId(animalId);
         }
         return picturesService.findAll(pictureSearchContext);
     }
