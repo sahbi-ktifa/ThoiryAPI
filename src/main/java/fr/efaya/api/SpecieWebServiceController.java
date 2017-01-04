@@ -1,7 +1,9 @@
 package fr.efaya.api;
 
+import fr.efaya.domain.Animal;
 import fr.efaya.domain.Picture;
 import fr.efaya.domain.Specie;
+import fr.efaya.repository.service.AnimalsService;
 import fr.efaya.repository.service.CommonObjectNotFound;
 import fr.efaya.repository.service.PicturesService;
 import fr.efaya.repository.service.SpeciesService;
@@ -27,6 +29,9 @@ public class SpecieWebServiceController {
     @Autowired
     private PicturesService picturesService;
 
+    @Autowired
+    private AnimalsService animalsService;
+
     @RequestMapping(value = "common/specie", method = RequestMethod.GET)
     public List<Specie> retrieveAllSpecies() {
         return speciesService.findAll();
@@ -45,6 +50,12 @@ public class SpecieWebServiceController {
         } else {
             return IOUtils.toByteArray(this.getClass().getResourceAsStream("Koala.jpg"));
         }
+    }
+
+    @RequestMapping(value = "common/specie/{id}/animals", method = RequestMethod.GET)
+    public List<Animal> retrieveSpecieAnimals(@PathVariable String id) throws CommonObjectNotFound {
+        Specie specie = speciesService.findById(id);
+        return animalsService.findAllBySpecieId(specie.getId());
     }
 
     @RequestMapping(value = "api/specie", method = RequestMethod.POST)

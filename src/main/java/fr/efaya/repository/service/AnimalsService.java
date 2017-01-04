@@ -44,6 +44,10 @@ public class AnimalsService implements CRUDService {
         return repository.findAll();
     }
 
+    public List<Animal> findAllBySpecieId(String specieId) {
+        return repository.findBySpecieId(specieId);
+    }
+
     @Override
     public Animal delete(String id) throws CommonObjectNotFound {
         Animal animal = findById(id);
