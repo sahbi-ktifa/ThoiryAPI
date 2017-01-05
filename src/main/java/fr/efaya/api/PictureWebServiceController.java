@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -47,8 +48,11 @@ public class PictureWebServiceController {
     }
 
     @RequestMapping(value = "api/picture", method = RequestMethod.POST)
-    public Picture createPicture(@RequestBody @Valid Picture picture) throws CommonObjectNotFound {
+    public Picture createPicture(@RequestBody @Valid Picture picture, Principal principal) throws CommonObjectNotFound {
         picture.setCreationDate(new Date());
+        picture.setLastModified(new Date());
+        picture.setLiked(0);
+        picture.setUsername(principal.getName());
         return save(picture, null);
     }
 

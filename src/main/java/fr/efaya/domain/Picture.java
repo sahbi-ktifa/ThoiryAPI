@@ -18,6 +18,7 @@ public class Picture extends CommonObject {
     private Integer liked = 0;
     private Date creationDate;
     private Date lastModified;
+    private String username;
 
     public List<String> getAnimalIds() {
         return animalIds;
@@ -73,5 +74,13 @@ public class Picture extends CommonObject {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

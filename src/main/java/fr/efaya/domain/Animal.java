@@ -3,6 +3,7 @@ package fr.efaya.domain;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Created by sktifa on 25/11/2016.
@@ -13,7 +14,8 @@ public class Animal extends CommonObject {
     private String specieId;
     @NotNull
     private String name;
-    private Integer age;
+    @Size(max = 4, min = 4)
+    private String birthYear;
 
     public String getSpecieId() {
         return specieId;
@@ -31,11 +33,11 @@ public class Animal extends CommonObject {
         this.name = name;
     }
 
-    public Integer getAge() {
-        return age;
+    public String getBirthYear() {
+        return birthYear;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setBirthYear(String birthYear) {
+        this.birthYear = birthYear;
     }
 }
