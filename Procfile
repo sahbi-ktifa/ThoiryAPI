@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar target/thoiry-photos-1.0.0.jar
+web: java -Dspring.active.profile=dev -Dserver.port=$PORT -jar target/thoiry-photos-1.0.0.jar

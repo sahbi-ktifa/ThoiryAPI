@@ -15,6 +15,9 @@ import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 @Configuration
 public class MongoConfig extends AbstractMongoConfiguration{
 
+    @Value("${spring.data.mongodb.uri}")
+    private String uri;
+
     @Bean
     public GridFsTemplate gridFsTemplate() throws Exception {
         return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
@@ -28,6 +31,6 @@ public class MongoConfig extends AbstractMongoConfiguration{
     @Override
     @Bean
     public Mongo mongo() throws Exception {
-        return new MongoClient("127.0.0.1");
+        return new MongoClient(new MongoClientURI(uri));
     }
 }
