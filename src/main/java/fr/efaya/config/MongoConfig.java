@@ -18,6 +18,9 @@ public class MongoConfig extends AbstractMongoConfiguration{
     @Value("${spring.data.mongodb.uri}")
     private String uri;
 
+    @Value("${spring.data.mongodb.database}")
+    private String database;
+
     @Bean
     public GridFsTemplate gridFsTemplate() throws Exception {
         return new GridFsTemplate(mongoDbFactory(), mappingMongoConverter());
@@ -25,12 +28,12 @@ public class MongoConfig extends AbstractMongoConfiguration{
 
     @Override
     protected String getDatabaseName() {
-        return "thoiryPhotosDB";
+        return database;
     }
 
     @Override
     @Bean
     public Mongo mongo() throws Exception {
-        return new MongoClient(new MongoClientURI(uri));
+       return new MongoClient(new MongoClientURI(uri));
     }
 }
