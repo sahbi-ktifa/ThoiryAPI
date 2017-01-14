@@ -19,6 +19,7 @@ import java.util.List;
  * Created by sktifa on 25/11/2016.
  */
 @RestController
+@CrossOrigin
 public class AnimalWebServiceController {
 
     @Autowired
