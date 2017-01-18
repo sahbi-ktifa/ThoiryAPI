@@ -48,7 +48,7 @@ public class SpecieWebServiceController {
         if (picture != null) {
             return picturesService.retrievePictureBinary(picture.getId());
         } else {
-            return IOUtils.toByteArray(this.getClass().getResourceAsStream("Koala.jpg"));
+            return IOUtils.toByteArray(this.getClass().getResourceAsStream("unknown_animal.png"));
         }
     }
 
