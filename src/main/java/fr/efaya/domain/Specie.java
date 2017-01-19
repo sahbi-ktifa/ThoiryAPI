@@ -13,6 +13,7 @@ import java.util.List;
 public class Specie extends CommonObject {
     @NotNull
     private String name;
+    private String link;
     private String description;
     private List<Constants.ORIGIN> origins;
 
@@ -22,6 +23,14 @@ public class Specie extends CommonObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public String getDescription() {

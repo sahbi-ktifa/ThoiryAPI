@@ -1,0 +1,21 @@
+{
+  "animals":
+  [
+    {
+      "name": "Ben",
+      "id": 0,
+      "specieId": "44",
+      "birthYear": "2002"
+    },
+    {
+      "name": "Sherkan",
+      "id": 1,
+      "specieId": "5"
+    },
+    {
+      "name": "Shenzi",
+      "id": 2,
+      "specieId": "0"
+    }
+  ]
+}
