@@ -113,41 +113,43 @@ public class PicturesService implements CRUDService {
     public byte[] retrievePictureBinary(String id, String format) throws CommonObjectNotFound {
         Picture picture = findById(id);
         if (picture.getBinaryId() != null) {
-            GridFSDBFile file = gridFsOperations.findOne(new Query(Criteria.where("_id").is(picture.getBinaryId())));
+            GridFSDBFile file = retrieveImageBinary(picture);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             if (file != null && format.equals(Constants.THUMB)) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                Constants.Format resolvedFormat = formats.get(format) != null ? formats.get(format) : formats.get(Constants.THUMB);
                 try {
-                    Constants.Format resolvedFormat = formats.get(format) != null ? formats.get(format) : formats.get(Constants.THUMB);
-                    BufferedImage resizedImage = new BufferedImage(resolvedFormat.getWidth(), resolvedFormat.getHeight(), ColorSpace.TYPE_RGB);
-                    Graphics2D g = resizedImage.createGraphics();
-                    g.drawImage(ImageIO.read(file.getInputStream()), 0, 0, resolvedFormat.getWidth(), resolvedFormat.getHeight(), null);
-                    g.dispose();
-
-                    ImageIO.write(resizedImage, "jpg", baos);
-                    baos.flush();
-                    byte[] result = baos.toByteArray();
-                    baos.close();
-                    return result;
+                    return getImageAsByteArray(file, baos, resolvedFormat.getWidth(), resolvedFormat.getHeight());
                 } catch (IOException e) {
                     throw new PictureBinaryNotFound();
                 }
             } else if (file != null && format.equals(Constants.PREVIEW)) {
-                ByteArrayOutputStream bao = new ByteArrayOutputStream();
-                byte[] buff = new byte[8000];
-
-                int bytesRead = 0;
                 try {
-                    while((bytesRead = file.getInputStream().read(buff)) != -1) {
-                        bao.write(buff, 0, bytesRead);
-                    }
-                    return bao.toByteArray();
+                    BufferedImage bimg = ImageIO.read(file.getInputStream());
+                    file = retrieveImageBinary(picture);
+                    return getImageAsByteArray(file, baos, bimg.getWidth(), bimg.getHeight());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new PictureBinaryNotFound();
                 }
             }
-
         }
         throw new PictureBinaryNotFound();
+    }
+
+    private GridFSDBFile retrieveImageBinary(Picture picture) {
+        return gridFsOperations.findOne(new Query(Criteria.where("_id").is(picture.getBinaryId())));
+    }
+
+    private byte[] getImageAsByteArray(GridFSDBFile file, ByteArrayOutputStream baos, int width, int height) throws IOException {
+        BufferedImage resizedImage = new BufferedImage(width, height, ColorSpace.TYPE_RGB);
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(ImageIO.read(file.getInputStream()), 0, 0, width, height, null);
+        g.dispose();
+
+        ImageIO.write(resizedImage, "jpg", baos);
+        baos.flush();
+        byte[] result = baos.toByteArray();
+        baos.close();
+        return result;
     }
 
     public Picture findOneBySpeciesId(String specieId) {
