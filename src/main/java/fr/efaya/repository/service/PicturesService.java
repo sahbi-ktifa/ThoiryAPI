@@ -115,18 +115,13 @@ public class PicturesService implements CRUDService {
         if (picture.getBinaryId() != null) {
             GridFSDBFile file = retrieveImageBinary(picture);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            if (file != null && format.equals(Constants.THUMB)) {
-                Constants.Format resolvedFormat = formats.get(format) != null ? formats.get(format) : formats.get(Constants.THUMB);
-                try {
-                    return getImageAsByteArray(file, baos, resolvedFormat.getWidth(), resolvedFormat.getHeight());
-                } catch (IOException e) {
-                    throw new PictureBinaryNotFound();
-                }
-            } else if (file != null && format.equals(Constants.PREVIEW)) {
+            if (file != null) {
+                Constants.Format boundary = formats.get(format) != null ? formats.get(format) : formats.get(Constants.THUMB);
                 try {
                     BufferedImage bimg = ImageIO.read(file.getInputStream());
                     file = retrieveImageBinary(picture);
-                    return getImageAsByteArray(file, baos, bimg.getWidth(), bimg.getHeight());
+                    Constants.Format aimedFormat = Constants.getScaledDimension(new Constants.Format(bimg.getWidth(), bimg.getHeight()), boundary);
+                    return getImageAsByteArray(file, baos, aimedFormat.getWidth(), aimedFormat.getHeight());
                 } catch (IOException e) {
                     throw new PictureBinaryNotFound();
                 }
