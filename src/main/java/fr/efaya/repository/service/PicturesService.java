@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static fr.efaya.Constants.formats;
+
 /**
  * Created by sktifa on 25/11/2016.
  */
@@ -112,10 +114,10 @@ public class PicturesService implements CRUDService {
         Picture picture = findById(id);
         if (picture.getBinaryId() != null) {
             GridFSDBFile file = gridFsOperations.findOne(new Query(Criteria.where("_id").is(picture.getBinaryId())));
-            if (file != null) {
+            if (file != null && format.equals(Constants.THUMB)) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 try {
-                    Constants.Format resolvedFormat = Constants.formats.get(format) != null ? Constants.formats.get(format) : Constants.formats.get(Constants.THUMB);
+                    Constants.Format resolvedFormat = formats.get(format) != null ? formats.get(format) : formats.get(Constants.THUMB);
                     BufferedImage resizedImage = new BufferedImage(resolvedFormat.getWidth(), resolvedFormat.getHeight(), ColorSpace.TYPE_RGB);
                     Graphics2D g = resizedImage.createGraphics();
                     g.drawImage(ImageIO.read(file.getInputStream()), 0, 0, resolvedFormat.getWidth(), resolvedFormat.getHeight(), null);
@@ -128,6 +130,19 @@ public class PicturesService implements CRUDService {
                     return result;
                 } catch (IOException e) {
                     throw new PictureBinaryNotFound();
+                }
+            } else if (file != null && format.equals(Constants.PREVIEW)) {
+                ByteArrayOutputStream bao = new ByteArrayOutputStream();
+                byte[] buff = new byte[8000];
+
+                int bytesRead = 0;
+                try {
+                    while((bytesRead = file.getInputStream().read(buff)) != -1) {
+                        bao.write(buff, 0, bytesRead);
+                    }
+                    return bao.toByteArray();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 

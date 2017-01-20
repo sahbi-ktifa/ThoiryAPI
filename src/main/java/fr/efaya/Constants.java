@@ -20,8 +20,7 @@ public class Constants {
     }
 
     public static final Map<String, Format> formats = new HashMap<String, Format>(){{
-        put(THUMB, new Format(50, 50));
-        put(PREVIEW, new Format(800, 600));
+        put(THUMB, new Format(200, 200));
     }};
 
     public static class Format {
