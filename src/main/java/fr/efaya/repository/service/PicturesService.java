@@ -139,8 +139,12 @@ public class PicturesService implements CRUDService {
         Graphics2D g = resizedImage.createGraphics();
         g.drawImage(ImageIO.read(file.getInputStream()), 0, 0, width, height, null);
         g.dispose();
+        g.setComposite(AlphaComposite.Src);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 
-        ImageIO.write(resizedImage, "jpg", baos);
+        ImageIO.write(resizedImage, "png", baos);
         baos.flush();
         byte[] result = baos.toByteArray();
         baos.close();
