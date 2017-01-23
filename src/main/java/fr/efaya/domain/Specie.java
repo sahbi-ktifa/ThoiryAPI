@@ -15,6 +15,7 @@ public class Specie extends CommonObject {
     private String name;
     private String link;
     private String description;
+    private String type;
     private List<Constants.ORIGIN> origins;
 
     public String getName() {
@@ -39,6 +40,14 @@ public class Specie extends CommonObject {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<Constants.ORIGIN> getOrigins() {
