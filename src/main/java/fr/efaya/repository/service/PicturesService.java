@@ -46,10 +46,10 @@ public class PicturesService implements CRUDService {
     private GridFsOperations gridFsOperations;
     private List<PageSearchHandler> pageSearchHandlers;
 
-    private static double[] BOUNDARY_GEO_LAT_MAX = {48.0, 51.0, 59.0};
-    private static double[] BOUNDARY_GEO_LAT_MIN = {48.0, 51.0, 0.0};
-    private static double[] BOUNDARY_GEO_LON_MAX = {1.0, 47.0, 59.0};
-    private static double[] BOUNDARY_GEO_LON_MIN = {1.0, 47.0, 0.0};
+    private static double[] BOUNDARY_GEO_LAT_MAX = {48.0, 52.0, 0.0};
+    private static double[] BOUNDARY_GEO_LAT_MIN = {48.0, 50.0, 0.0};
+    private static double[] BOUNDARY_GEO_LON_MAX = {1.0, 49.0, 0.0};
+    private static double[] BOUNDARY_GEO_LON_MIN = {1.0, 45.0, 0.0};
 
     @Autowired
     public PicturesService(PicturesRepository repository, GridFsOperations gridFsOperations, List<PageSearchHandler> handlers) {
@@ -117,9 +117,6 @@ public class PicturesService implements CRUDService {
             return true;
         }
         if (coord.get(1) < refMin[1] || coord.get(1) > refMax[1]) {
-            return true;
-        }
-        if (coord.get(2) < refMin[2] || coord.get(2) > refMax[2]) {
             return true;
         }
         return false;
