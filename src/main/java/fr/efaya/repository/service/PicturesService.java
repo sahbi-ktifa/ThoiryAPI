@@ -79,6 +79,7 @@ public class PicturesService implements CRUDService {
             if (descriptor.getGpsLongitudeDescription() == null
                 || descriptor.getGpsLatitudeDescription() == null
                 || isLocationUnacceptable(descriptor.getGpsLongitudeDescription(), descriptor.getGpsLatitudeDescription())) {
+                delete(picture.getId());
                 throw new BadGeolocationException();
             }
         } catch (ImageProcessingException | IOException e) {
