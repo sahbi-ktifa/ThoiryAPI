@@ -2,6 +2,7 @@ package fr.efaya.api.handling;
 
 import fr.efaya.api.PictureWebServiceController;
 import fr.efaya.api.UserWebServiceController;
+import fr.efaya.repository.service.BadGeolocationException;
 import fr.efaya.repository.service.CommonObjectNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,6 +23,12 @@ public class ApiWebServiceAdviceController {
     @ExceptionHandler(CommonObjectNotFound.class)
     public ErrorMessage handleNotFound() {
         return new ErrorMessage("Entity not found", new Date());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)  // 400
+    @ExceptionHandler(BadGeolocationException.class)
+    public ErrorMessage unacceptableGeolocation() {
+        return new ErrorMessage("Acceptable geolocation not found", new Date());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)  // 404

@@ -4,6 +4,7 @@ import fr.efaya.Constants;
 import fr.efaya.domain.Animal;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.service.AnimalsService;
+import fr.efaya.repository.service.BadGeolocationException;
 import fr.efaya.repository.service.CommonObjectNotFound;
 import fr.efaya.repository.service.PicturesService;
 import org.apache.commons.io.FileUtils;
@@ -78,7 +79,7 @@ public class PictureWebServiceController {
 
     @RequestMapping(value = "api/picture/{id}/binary", method = RequestMethod.POST)
     public Picture savePictureBinary(@PathVariable String id,
-                                     @RequestParam MultipartFile file) throws CommonObjectNotFound {
+                                     @RequestParam MultipartFile file) throws CommonObjectNotFound, BadGeolocationException {
         if (file == null) {
             throw new PictureBinaryNotAcceptable();
         }
