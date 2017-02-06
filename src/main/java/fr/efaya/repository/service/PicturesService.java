@@ -73,6 +73,7 @@ public class PicturesService implements CRUDService {
             Metadata metadata = ImageMetadataReader.readMetadata(file);
             GpsDirectory directory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             if (directory == null) {
+                delete(picture.getId());
                 throw new BadGeolocationException();
             }
             GpsDescriptor descriptor = new GpsDescriptor(directory);
