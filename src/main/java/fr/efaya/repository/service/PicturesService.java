@@ -184,10 +184,12 @@ public class PicturesService implements CRUDService {
                     Constants.Format aimedFormat = Constants.getScaledDimension(new Constants.Format(bimg.getWidth(), bimg.getHeight()), boundary);
                     return getImageAsByteArray(bimg, aimedFormat.getWidth(), aimedFormat.getHeight());
                 } catch (IOException e) {
+                    delete(id);
                     throw new PictureBinaryNotFound();
                 }
             }
         }
+        delete(id);
         throw new PictureBinaryNotFound();
     }
 
