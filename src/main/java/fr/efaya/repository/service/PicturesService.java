@@ -177,14 +177,12 @@ public class PicturesService implements CRUDService {
         Picture picture = findById(id);
         if (picture.getBinaryId() != null) {
             GridFSDBFile file = retrieveImageBinary(picture);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             if (file != null) {
                 Constants.Format boundary = formats.get(format) != null ? formats.get(format) : formats.get(Constants.THUMB);
                 try {
                     BufferedImage bimg = ImageIO.read(file.getInputStream());
-                    file = retrieveImageBinary(picture);
                     Constants.Format aimedFormat = Constants.getScaledDimension(new Constants.Format(bimg.getWidth(), bimg.getHeight()), boundary);
-                    return getImageAsByteArray(file, baos, aimedFormat.getWidth(), aimedFormat.getHeight());
+                    return getImageAsByteArray(bimg, aimedFormat.getWidth(), aimedFormat.getHeight());
                 } catch (IOException e) {
                     throw new PictureBinaryNotFound();
                 }
@@ -197,10 +195,11 @@ public class PicturesService implements CRUDService {
         return gridFsOperations.findOne(new Query(Criteria.where("_id").is(picture.getBinaryId())));
     }
 
-    private byte[] getImageAsByteArray(GridFSDBFile file, ByteArrayOutputStream baos, int width, int height) throws IOException {
+    private byte[] getImageAsByteArray(BufferedImage bimg, int width, int height) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         BufferedImage resizedImage = new BufferedImage(width, height, ColorSpace.TYPE_RGB);
         Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(ImageIO.read(file.getInputStream()), 0, 0, width, height, null);
+        g.drawImage(bimg, 0, 0, width, height, null);
         g.dispose();
         g.setComposite(AlphaComposite.Src);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
