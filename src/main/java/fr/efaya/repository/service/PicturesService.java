@@ -74,6 +74,7 @@ public class PicturesService implements CRUDService {
             GpsDirectory directory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             if (directory == null) {
                 delete(picture.getId());
+                System.out.println("No geolocation information");
                 throw new BadGeolocationException();
             }
             GpsDescriptor descriptor = new GpsDescriptor(directory);
@@ -81,6 +82,7 @@ public class PicturesService implements CRUDService {
                 || descriptor.getGpsLatitudeDescription() == null
                 || isLocationUnacceptable(descriptor.getGpsLongitudeDescription(), descriptor.getGpsLatitudeDescription())) {
                 delete(picture.getId());
+                System.out.println("Incorrect geolocation information");
                 throw new BadGeolocationException();
             }
         } catch (ImageProcessingException | IOException e) {
