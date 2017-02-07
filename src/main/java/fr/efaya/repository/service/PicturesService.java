@@ -1,10 +1,5 @@
 package fr.efaya.repository.service;
 
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.exif.GpsDescriptor;
-import com.drew.metadata.exif.GpsDirectory;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSFile;
 import fr.efaya.Constants;
@@ -14,6 +9,12 @@ import fr.efaya.api.handler.PageSearchHandler;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.PicturesRepository;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -69,8 +71,7 @@ public class PicturesService implements CRUDService {
     }
 
     public void saveBinary(Picture picture, File file) throws CommonObjectNotFound, BadGeolocationException {
-        try {
-            Metadata metadata = ImageMetadataReader.readMetadata(file);
+            /*Metadata metadata = ImageMetadataReader.readMetadata(file);
             GpsDirectory directory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             if (directory == null) {
                 delete(picture.getId());
@@ -84,9 +85,17 @@ public class PicturesService implements CRUDService {
                 delete(picture.getId());
                 System.out.println("Incorrect geolocation information");
                 throw new BadGeolocationException();
-            }
-        } catch (ImageProcessingException | IOException e) {
-            e.printStackTrace();
+            }*/
+        Metadata metadata = new Metadata();
+        try (FileInputStream inputstream = new FileInputStream(file)) {
+            new AutoDetectParser().parse(inputstream, new BodyContentHandler(), metadata, new ParseContext());
+        } catch (TikaException | SAXException | IOException e) {
+
+        }
+        if (metadata.get("geo:lat") == null || metadata.get("geo:long") == null ||
+                isLocationUnacceptable(metadata.get("geo:lat"), metadata.get("geo:long"))) {
+            delete(picture.getId());
+            throw new BadGeolocationException();
         }
         try (InputStream inputStream = new FileInputStream(file.getAbsolutePath())) {
             GridFSFile stored = gridFsOperations.store(inputStream, file.getName());
@@ -100,6 +109,18 @@ public class PicturesService implements CRUDService {
     }
 
     private boolean isLocationUnacceptable(String longitude, String latitude) {
+        Double lat = Double.valueOf(latitude);
+        if (lat < 1.77 || lat > 1.81) {
+            return true;
+        }
+        Double lon = Double.valueOf(longitude);
+        if (lon < 48.84 || lon > 48.88) {
+            return true;
+        }
+        return false;
+    }
+
+    /*private boolean isLocationUnacceptable(String longitude, String latitude) {
         List<Double> lat = resolveCoord(latitude);
         if (checkCoordOut(lat, BOUNDARY_GEO_LAT_MIN, BOUNDARY_GEO_LAT_MAX)) {
             return true;
@@ -109,7 +130,7 @@ public class PicturesService implements CRUDService {
             return true;
         }
         return false;
-    }
+    }*/
 
     private boolean checkCoordOut(List<Double> coord, double[] refMin, double[] refMax) {
         if (CollectionUtils.isEmpty(coord) || coord.size() < 3) {
