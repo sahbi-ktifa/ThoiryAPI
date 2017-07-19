@@ -9,12 +9,6 @@ import fr.efaya.api.handler.PageSearchHandler;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.PicturesRepository;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.Parser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -23,13 +17,17 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -86,7 +84,7 @@ public class PicturesService implements CRUDService {
                 System.out.println("Incorrect geolocation information");
                 throw new BadGeolocationException();
             }*/
-        Metadata metadata = new Metadata();
+        /*Metadata metadata = new Metadata();
         try (FileInputStream inputstream = new FileInputStream(file)) {
             new AutoDetectParser().parse(inputstream, new BodyContentHandler(), metadata, new ParseContext());
         } catch (TikaException | SAXException | IOException e) {
@@ -96,7 +94,7 @@ public class PicturesService implements CRUDService {
                 isLocationUnacceptable(metadata.get("geo:lat"), metadata.get("geo:long"))) {
             delete(picture.getId());
             throw new BadGeolocationException();
-        }
+        }*/
         try (InputStream inputStream = new FileInputStream(file.getAbsolutePath())) {
             GridFSFile stored = gridFsOperations.store(inputStream, file.getName());
             picture.setBinaryId(stored.getId().toString());

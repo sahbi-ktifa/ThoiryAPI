@@ -10,25 +10,32 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
 public class ThoiryPhotosApplication implements CommandLineRunner {
 
-
     @Autowired
     private List<Initializer> initializers;
+    private static boolean initialized;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ThoiryPhotosApplication.class, args);
 	}
 
-    @Override
-    public void run(String... args) throws Exception {
+    @Scheduled(fixedRate=1500000)
+    public void keepMeAlive() {
+	    if (initialized && LocalTime.now().getHour() > 19) {
+            return;//Do not keep alive
+        }
         if (initializers != null) {
+            initialized = true;
             initializers.forEach((initializer) -> {
                 try {
                     initializer.load();
@@ -37,5 +44,10 @@ public class ThoiryPhotosApplication implements CommandLineRunner {
                 }
             });
         }
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        keepMeAlive();
     }
 }
