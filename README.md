@@ -4,9 +4,9 @@ This project aims to offer an API about Thoiry Zoo resources. This zoo is locate
 
 #### 1. Demo
 
-This API is available at: https://account-manager.herokuapp.com/
+This API is available at: https://thoiryphotos-dev.herokuapp.com/
 
-A Swagger is also available at: https://account-manager.herokuapp.com//swagger-ui.html
+A Swagger is also available at: https://thoiryphotos-dev.herokuapp.com/swagger-ui.html
 
 #### 2. Access and security
 
