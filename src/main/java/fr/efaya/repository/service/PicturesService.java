@@ -1,5 +1,9 @@
 package fr.efaya.repository.service;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.GpsDescriptor;
+import com.drew.metadata.exif.GpsDirectory;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSFile;
 import fr.efaya.Constants;
@@ -69,7 +73,9 @@ public class PicturesService implements CRUDService {
     }
 
     public void saveBinary(Picture picture, File file) throws CommonObjectNotFound, BadGeolocationException {
-            /*Metadata metadata = ImageMetadataReader.readMetadata(file);
+        System.out.println("Check geoloc info !");
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(file);
             GpsDirectory directory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
             if (directory == null) {
                 delete(picture.getId());
@@ -78,12 +84,19 @@ public class PicturesService implements CRUDService {
             }
             GpsDescriptor descriptor = new GpsDescriptor(directory);
             if (descriptor.getGpsLongitudeDescription() == null
-                || descriptor.getGpsLatitudeDescription() == null
-                || isLocationUnacceptable(descriptor.getGpsLongitudeDescription(), descriptor.getGpsLatitudeDescription())) {
+                    || descriptor.getGpsLatitudeDescription() == null
+                    || isLocationUnacceptable(descriptor.getGpsLongitudeDescription(), descriptor.getGpsLatitudeDescription())) {
                 delete(picture.getId());
                 System.out.println("Incorrect geolocation information");
                 throw new BadGeolocationException();
-            }*/
+            }
+            System.out.println("LONG : " + descriptor.getGpsLongitudeDescription());
+            System.out.println("LAT : " + descriptor.getGpsLatitudeDescription());
+
+        } catch (Exception e) {
+            System.out.println("An error occured : " + e.getMessage());
+
+        }
         /*Metadata metadata = new Metadata();
         try (FileInputStream inputstream = new FileInputStream(file)) {
             new AutoDetectParser().parse(inputstream, new BodyContentHandler(), metadata, new ParseContext());
