@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -25,15 +24,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static fr.efaya.Constants.formats;
 
@@ -45,11 +41,6 @@ public class PicturesService implements CRUDService {
     private PicturesRepository repository;
     private GridFsOperations gridFsOperations;
     private List<PageSearchHandler> pageSearchHandlers;
-
-    private static double[] BOUNDARY_GEO_LAT_MAX = {48.0, 52.0, 0.0};
-    private static double[] BOUNDARY_GEO_LAT_MIN = {48.0, 50.0, 0.0};
-    private static double[] BOUNDARY_GEO_LON_MAX = {1.0, 49.0, 0.0};
-    private static double[] BOUNDARY_GEO_LON_MIN = {1.0, 45.0, 0.0};
 
     @Autowired
     public PicturesService(PicturesRepository repository, GridFsOperations gridFsOperations, List<PageSearchHandler> handlers) {
@@ -69,85 +60,13 @@ public class PicturesService implements CRUDService {
     }
 
     public void saveBinary(Picture picture, File file) throws CommonObjectNotFound, BadGeolocationException {
-            /*Metadata metadata = ImageMetadataReader.readMetadata(file);
-            GpsDirectory directory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
-            if (directory == null) {
-                delete(picture.getId());
-                System.out.println("No geolocation information");
-                throw new BadGeolocationException();
-            }
-            GpsDescriptor descriptor = new GpsDescriptor(directory);
-            if (descriptor.getGpsLongitudeDescription() == null
-                || descriptor.getGpsLatitudeDescription() == null
-                || isLocationUnacceptable(descriptor.getGpsLongitudeDescription(), descriptor.getGpsLatitudeDescription())) {
-                delete(picture.getId());
-                System.out.println("Incorrect geolocation information");
-                throw new BadGeolocationException();
-            }*/
-        /*Metadata metadata = new Metadata();
-        try (FileInputStream inputstream = new FileInputStream(file)) {
-            new AutoDetectParser().parse(inputstream, new BodyContentHandler(), metadata, new ParseContext());
-        } catch (TikaException | SAXException | IOException e) {
-
-        }
-        if (metadata.get("geo:lat") == null || metadata.get("geo:long") == null ||
-                isLocationUnacceptable(metadata.get("geo:lat"), metadata.get("geo:long"))) {
-            delete(picture.getId());
-            throw new BadGeolocationException();
-        }*/
         try (InputStream inputStream = new FileInputStream(file.getAbsolutePath())) {
             GridFSFile stored = gridFsOperations.store(inputStream, file.getName());
             picture.setBinaryId(stored.getId().toString());
             save(picture.getId(), picture);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private boolean isLocationUnacceptable(String longitude, String latitude) {
-        Double lat = Double.valueOf(latitude);
-        if (lat < 1.77 || lat > 1.81) {
-            return true;
-        }
-        Double lon = Double.valueOf(longitude);
-        if (lon < 48.84 || lon > 48.88) {
-            return true;
-        }
-        return false;
-    }
-
-    /*private boolean isLocationUnacceptable(String longitude, String latitude) {
-        List<Double> lat = resolveCoord(latitude);
-        if (checkCoordOut(lat, BOUNDARY_GEO_LAT_MIN, BOUNDARY_GEO_LAT_MAX)) {
-            return true;
-        }
-        List<Double> lon = resolveCoord(longitude);
-        if (checkCoordOut(lon, BOUNDARY_GEO_LON_MIN, BOUNDARY_GEO_LON_MAX)) {
-            return true;
-        }
-        return false;
-    }*/
-
-    private boolean checkCoordOut(List<Double> coord, double[] refMin, double[] refMax) {
-        if (CollectionUtils.isEmpty(coord) || coord.size() < 3) {
-            return true;
-        }
-        if (coord.get(0) < refMin[0] || coord.get(0) > refMax[0]) {
-            return true;
-        }
-        if (coord.get(1) < refMin[1] || coord.get(1) > refMax[1]) {
-            return true;
-        }
-        return false;
-    }
-
-    private List<Double> resolveCoord(String coord) {
-        String[] split = coord.split(" ");
-        return Stream.of(split)
-                .map(d -> Double.valueOf(d.replaceAll("[^\\d.]", "")))
-                .collect(Collectors.toList());
     }
 
     @Override
