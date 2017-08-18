@@ -16,6 +16,42 @@
       "name": "Shenzi",
       "id": 2,
       "specieId": "0"
+    },
+    {
+      "name": "Jenny",
+      "id": 3,
+      "specieId": "44",
+      "birthYear": "2010"
+    },
+    {
+      "name": "Akele",
+      "id": 4,
+      "birthYear": "2011",
+      "specieId": "2"
+    },
+    {
+      "name": "Laya",
+      "id": 5,
+      "specieId": "39",
+      "birthYear": "2017"
+    },
+    {
+      "name": "Wolfgang",
+      "id": 6,
+      "specieId": "32",
+      "birthYear": "1976"
+    },
+    {
+      "name": "Beethoven",
+      "id": 7,
+      "specieId": "32",
+      "birthYear": "1980"
+    },
+    {
+      "name": "Madoaï",
+      "id": 8,
+      "specieId": "6",
+      "birthYear": "2000"
     }
   ]
 }
