@@ -9,6 +9,7 @@ import fr.efaya.api.handler.PageSearchHandler;
 import fr.efaya.domain.CommonObject;
 import fr.efaya.domain.Picture;
 import fr.efaya.repository.PicturesRepository;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -118,7 +119,8 @@ public class PicturesService implements CRUDService {
             if (file != null) {
                 Constants.Format boundary = formats.get(format) != null ? formats.get(format) : formats.get(Constants.THUMB);
                 try {
-                    BufferedImage bimg = ImageIO.read(file.getInputStream());
+                    //BufferedImage bimg = ImageIO.read(file.getInputStream());
+                    BufferedImage bimg = Thumbnails.of(file.getInputStream()).scale(1).asBufferedImage();
                     Constants.Format aimedFormat = Constants.getScaledDimension(new Constants.Format(bimg.getWidth(), bimg.getHeight()), boundary);
                     return getImageAsByteArray(bimg, aimedFormat.getWidth(), aimedFormat.getHeight());
                 } catch (IOException e) {
