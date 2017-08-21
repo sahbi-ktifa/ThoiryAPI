@@ -18,10 +18,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -119,10 +115,13 @@ public class PicturesService implements CRUDService {
             if (file != null) {
                 Constants.Format boundary = formats.get(format) != null ? formats.get(format) : formats.get(Constants.THUMB);
                 try {
-                    //BufferedImage bimg = ImageIO.read(file.getInputStream());
-                    BufferedImage bimg = Thumbnails.of(file.getInputStream()).scale(1).asBufferedImage();
-                    Constants.Format aimedFormat = Constants.getScaledDimension(new Constants.Format(bimg.getWidth(), bimg.getHeight()), boundary);
-                    return getImageAsByteArray(bimg, aimedFormat.getWidth(), aimedFormat.getHeight());
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    Thumbnails.of(file.getInputStream())
+                            .scale(1)
+                            .width(boundary.getWidth())
+                            .height(boundary.getHeight())
+                            .toOutputStream(baos);
+                    return baos.toByteArray();
                 } catch (IOException e) {
                     delete(id);
                     throw new PictureBinaryNotFound();
@@ -135,24 +134,6 @@ public class PicturesService implements CRUDService {
 
     private GridFSDBFile retrieveImageBinary(Picture picture) {
         return gridFsOperations.findOne(new Query(Criteria.where("_id").is(picture.getBinaryId())));
-    }
-
-    private byte[] getImageAsByteArray(BufferedImage bimg, int width, int height) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        BufferedImage resizedImage = new BufferedImage(width, height, ColorSpace.TYPE_RGB);
-        Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(bimg, 0, 0, width, height, null);
-        g.dispose();
-        g.setComposite(AlphaComposite.Src);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-
-        ImageIO.write(resizedImage, "png", baos);
-        baos.flush();
-        byte[] result = baos.toByteArray();
-        baos.close();
-        return result;
     }
 
     public Picture findOneBySpeciesId(String specieId) {
