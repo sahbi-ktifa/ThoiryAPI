@@ -119,7 +119,6 @@ public class PicturesService implements CRUDService {
                     Thumbnails.of(file.getInputStream())
                             .width(boundary.getWidth())
                             .height(boundary.getHeight())
-                            .scale(1)
                             .toOutputStream(baos);
                     return baos.toByteArray();
                 } catch (IOException e) {
