@@ -1,4 +1,4 @@
-# Thoiry Zoo API
+# Thoiry Zoo API [![Build Status](https://travis-ci.org/sahbi-ktifa/ThoiryAPI.svg?branch=master)](https://travis-ci.org/sahbi-ktifa/ThoiryAPI)
 
 This project aims to offer an API about Thoiry Zoo resources. This zoo is located in France, near Paris.
 
